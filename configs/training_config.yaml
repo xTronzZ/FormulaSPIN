@@ -1,0 +1,93 @@
+# FormulaSPIN Training Configuration
+#
+# This file is loaded automatically by formulaspin/train_formulaspin.py.
+# CLI arguments still override config values.
+#
+# Placeholder rules used in this file:
+# - Empty string means "leave this optional path/string unset"
+# - -1 means "leave this optional integer unset"
+#
+# Current practical defaults:
+# - Optimizer: rmsprop
+# - Weight decay: 0.0
+# - Warmup ratio: 0.1
+# - Peak learning rate used for direct single-run training: 5e-7
+# - Direct single-run default spin_logit_scale: 0.1
+# - Multi-iteration pipeline uses iter0/1=5e-7 and iter2/3=1e-7 in run_full_pipeline.sh
+# - Multi-iteration pipeline uses spin_logit_scale 0.1 for iter0/1/2 and 5.0 for iter3
+# - Multi-iteration pipeline uses current synthetic data only at iter0, then mixes previous-iteration 50k with current-iteration 50k for iter1-3
+
+model:
+  model_name_or_path: "/root/autodl-tmp/modelscope/models/unsloth/Llama-3.1-8B-Instruct"
+  adapter_name_or_path: "/root/formulaspin/adapter-instruct_2epoch"
+  ref_model_name_or_path: ""
+  use_shared_reference_adapter: true
+  ref_adapter_name_or_path: ""
+  policy_adapter_name: "policy"
+  reference_adapter_name: "reference"
+  torch_dtype: "bfloat16"
+  use_flash_attention_2: true
+
+data:
+  train_data: "formulaspin/opponent_dataset/spin_adapter_instruct2epoch_iter0_mixed_data"
+  eval_data: ""
+  dataset_mixer: ""
+  prompt_template: >
+    Generate one valid Microsoft Excel formula for the following query. Return only the formula itself. Do not include any explanation, notes, Markdown, quotes, backticks, labels, or extra text.
+    Query: {query}
+    Table: {table}
+    Microsoft Excel formula:
+  prompt_template_file: ""
+  preprocessing_num_workers: -1
+  max_length: 640
+  max_prompt_length: 448
+
+training:
+  output_dir: "formulaspin/outputs/train/formulaspin"
+  num_train_epochs: 2
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 5.0e-7
+  weight_decay: 0.0
+  warmup_ratio: 0.1
+  lr_scheduler_type: "cosine"
+  optim: "rmsprop"
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_epsilon: 1.0e-8
+  max_grad_norm: 1.0
+
+formulaspin:
+  beta_max: 0.25
+  spin_logit_scale: 0.1
+  temperature: 0.8
+  loss_type: "sigmoid"
+
+runtime:
+  seed: 42
+  bf16: true
+  fp16: false
+  tf32: true
+  deepspeed: "formulaspin/configs/deepspeed_zero2_bf16.json"
+  gradient_checkpointing: true
+  log_file: "formulaspin/outputs/logs/train_runtime.log"
+
+logging:
+  logging_steps: 20
+  save_steps: 1000
+  eval_steps: 1000
+  save_total_limit: 2
+  report_to: "none"
+
+periodic_validation:
+  evaluation_strategy: "no"
+  eval_accumulation_steps: -1
+  valid_data: "formulaspin/dataset/testset.json"
+  valid_steps: 500
+  valid_subset_size: 1024
+  valid_batch_size: 8
+  valid_max_new_tokens: 256
+
+advanced:
+  remove_unused_columns: false
