@@ -1,0 +1,5 @@
+Return one valid Microsoft Excel formula only.
+Do not output any explanation, prose, Markdown, labels, or extra text.
+Query: {query}
+Table: {table}
+Formula:

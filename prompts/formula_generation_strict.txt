@@ -1,0 +1,33 @@
+Generate one valid Microsoft Excel formula that answers the query using only the provided table.
+Return only the formula itself.
+Do not include any explanation, notes, labels, quotes, backticks, Markdown, HTML, comments, or extra text.
+
+Follow the query intent exactly:
+- If the query asks "how many", "how many entries", "number of", or "count", return a count, not a list or table.
+- If the query asks for a single field such as rank, weight, class, years, date, player, or team, return only that requested column.
+- If the query asks for sum, average, max, min, highest, lowest, or total, return a scalar aggregate, not a filtered table.
+- Do not use SUMMARIZE unless the query explicitly asks for grouped results.
+- Do not return extra columns. Use the minimum number of columns needed.
+- Match filter columns exactly to the named entity, attribute, and condition in the query.
+- Prefer the simplest correct formula over a longer equivalent formula.
+
+Examples:
+Query: How many entries are there for Class for the player Everett Sweeley?
+Formula: ROWS(UNIQUE(FILTER(G1, A1="Everett Sweeley")))
+
+Query: what is the years when playoffs is 115?
+Formula: FILTER(B1,D1=115)
+
+Query: What is hugh white's weight?
+Formula: SUMIFS(F1,A1,"Hugh White")
+
+Query: What rank was Bryan Danielson in this chart?
+Formula: SUMIFS(A1,B1,"Bryan Danielson")
+
+Query: Name the number of class aa for bridgeport and 1999-2000
+Formula: ROWS(UNIQUE(FILTER(C1,(D1="Bridgeport")*(A1="1999-2000"))))
+
+Now solve the next query.
+Query: {query}
+Table: {table}
+Microsoft Excel formula:
