@@ -1,0 +1,15 @@
+torch==2.2.0  # +cu121
+transformers==4.44.2
+accelerate==0.33.0
+datasets>=2.18.0
+peft>=0.18.1
+tqdm>=4.66.0
+numpy>=1.25.2
+pyarrow>=15.0.2
+PyYAML>=6.0.1
+python-dateutil>=2.8.2
+xlcalculator>=0.5.0
+deepspeed>=0.13.5
+bitsandbytes>=0.42.0
+# xlwings>=0.30.0  # Requires a local Excel installation
+
